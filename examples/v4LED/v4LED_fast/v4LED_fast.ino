@@ -44,6 +44,10 @@ LIDARLite_v4LED myLidarLite;
 #define MonitorPin    3
 #define TriggerPin    2
 
+uint32_t currentTime;
+uint32_t previousTime;
+uint32_t elapsedTime;
+
 //---------------------------------------------------------------------
 void setup()
 //---------------------------------------------------------------------
@@ -113,8 +117,11 @@ void setup()
     // ----------------------------------------------------------------------
     uint8_t dataByte = 0x00;
     myLidarLite.write(0xEB, &dataByte, 1, 0x62); // Turn off high accuracy mode
-}
 
+    currentTime  = millis();
+    previousTime = currentTime;
+    elapsedTime  = 0;
+}
 
 //---------------------------------------------------------------------
 void loop()
@@ -135,7 +142,13 @@ void loop()
 
     if (newDistance)
     {
-        Serial.println(distance); // print measurement to serial terminal
+        currentTime  = millis();
+        elapsedTime  = currentTime - previousTime;
+        previousTime = currentTime;
+
+        Serial.print(distance);    Serial.print(" cm, ");
+        Serial.print(elapsedTime); Serial.print(" ms");
+        Serial.println("");
     }
 }
 

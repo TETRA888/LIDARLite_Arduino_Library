@@ -40,8 +40,6 @@
 
 LIDARLite_v4LED myLidarLite;
 
-#define FAST_I2C
-
 #define MonitorPin    3
 #define TriggerPin    2
 
@@ -61,13 +59,7 @@ void setup()
 
     // Initialize Arduino I2C (for communication to LidarLite)
     Wire.begin();
-    #ifdef FAST_I2C
-        #if ARDUINO >= 157
-            Wire.setClock(400000UL); // Set I2C frequency to 400kHz (for Arduino Due)
-        #else
-            TWBR = ((F_CPU / 400000UL) - 16) / 2; // Set I2C frequency to 400kHz
-        #endif
-    #endif
+    Wire.setClock(400000);
 
     // ----------------------------------------------------------------------
     // The LIDAR-Lite v4 LED is strictly a 3.3V system. The Arduino Due is a
@@ -397,6 +389,10 @@ void VersionPrint(void)
     Serial.print("LRF Firmware Version  - v");
     Serial.print((*lrfVersion) / 100);
     Serial.print(".");
+    if (((*lrfVersion) % 100) < 10)
+    {
+        Serial.print("0");
+    }
     Serial.print((*lrfVersion) % 100);
     Serial.println("");
 
